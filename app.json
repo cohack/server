@@ -1,0 +1,6 @@
+{
+  "name": "CoHack",
+  "description": "Process the financial data and output it to firebase",
+  "repository": "https://github.com/cohack/server",
+  "keywords": ["node", "express", "firebase"]
+}
