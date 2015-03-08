@@ -67,7 +67,7 @@ var computeChanges = function() {
         progress = diff - savingGoal;
         currentRef.child('diff').set(diff.toFixed(2));
         currentRef.child('progress').set(progress.toFixed(2));
-        var message = (progress > 0) ? ' You are on your way to reach your goals' : 'You need to save more';
+        var message = (progress > 0) ? ' You are on your way to reach your goals' : 'You need to save ' + (-progress).toFixed(2) + ' USD more';
         nexmo.sendTextMessage('12529178656', '16509337145' , 'Your goals changed! ' +  message);
       });
   });
