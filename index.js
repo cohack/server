@@ -3,6 +3,7 @@ var _ = require('lodash');
 var rx = require('rx');
 var Firebase = require('firebase');
 var moment = require('moment');
+var nexmo = require('easynexmo');
 
 // API
 // gets - Amounts
@@ -20,6 +21,10 @@ var moment = require('moment');
 // Have a separate table for that
 // Listen to the data from client firebase and pull info and update
 // Push updated data back
+//
+
+nexmo.initialize('d2009bc5', '19de0ed6', 'http');
+
 
 var computeChanges = function() {
 
@@ -27,7 +32,8 @@ var computeChanges = function() {
   var currentRef = new Firebase("https://cohack.firebaseio.com/current");
   var goalsRef = new Firebase("https://cohack.firebaseio.com/goals");
 
-  compute.getMonthTransactions()
+  goalsRef.on('value', function(dataSnapshot) {
+    compute.getMonthTransactions()
     .reduce(function(acc, transaction) {
       index = _.findIndex(acc, function(prev) {
         return transaction.datetime > prev.datetime;
@@ -45,7 +51,6 @@ var computeChanges = function() {
       transactionsRef.set(transactions);
     });
 
-  goalsRef.on('value', function(dataSnapshot) {
     var obj = dataSnapshot.val();
     var savingGoal = _.chain(obj)
       .values()
@@ -62,8 +67,11 @@ var computeChanges = function() {
         progress = diff - savingGoal;
         currentRef.child('diff').set(diff.toFixed(2));
         currentRef.child('progress').set(progress.toFixed(2));
+        var message = (progress > 0) ? ' You are on your way to reach your goals' : 'You need to save more';
+        nexmo.sendTextMessage('12529178656', '16509337145' , 'Your goals changed! ' +  message);
       });
   });
+
 };
 
 computeChanges();
